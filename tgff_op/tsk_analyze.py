@@ -57,13 +57,13 @@ def outputMatrix(matDep,tasks,arq):
                 arq.write(inf)
         arq.write('\n')
 
-def indIndexExtract(indTasks):
+def indIndexes(indTasks):
     indexes = []
     for i in range(len(indTasks)):
         indexes.append(int(indTasks[i].split('_')[1]))
     return indexes
 
-def depIndexExtract(indTask, matDep):
+def depIndexes(indTask, matDep):
     dep=[]
     for i in range(len(matDep[indTask])):
         dep.append(int(matDep[indTask][i].split('_')[1]))

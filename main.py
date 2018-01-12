@@ -23,13 +23,13 @@ def main():
     matDep = tsk_analyze.matrixCreate(len(tasks))
     matDep = tsk_analyze.destList(tasks, dep, matDep)
     indTasks = tsk_analyze.extractInd(tasks, matDep, indTasks)
-    indIndex = tsk_analyze.indIndexExtract(indTasks)
+    indIndex = tsk_analyze.indIndexes(indTasks)
     tsk_analyze.outputMatrix(matDep, tasks, output)
 
     ##Pareto.paretoCalculate()
 
     for i in indIndex:
-        depIndex = tsk_analyze.depIndexExtract(i,matDep)
+        depIndex = tsk_analyze.depIndexes(i,matDep)
         CreateFile.Envio(i, len(matDep[i]), depIndex)
 
     print('Indexes of IT:{}'.format(indIndex))
