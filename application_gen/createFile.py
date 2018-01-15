@@ -1,6 +1,6 @@
 import string
-import Pareto
 
+from application_gen import paretoGen
 
 
 ##Quais os nós dependentes?
@@ -9,7 +9,7 @@ import Pareto
 ##TaskA = Task0 ; TaskB = Task1 ...
 
 def Envio(noIndependente, numberDependentes, dependentPosition):
-    valoresON, valoresOFF = Pareto.paretoCalculate()
+    valoresON, valoresOFF = paretoGen.paretoCalculate()
     StrinON = '{' + ','.join(str(e) for e in valoresON) + '}'
     StrinOFF = '{' + ','.join(str(e) for e in valoresOFF) + '}'
     a = list(string.ascii_uppercase)

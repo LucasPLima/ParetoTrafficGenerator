@@ -1,8 +1,7 @@
 import random
-import string
-import CreateFile
 
-    ###############INICIALIZAÇÃO##################
+
+###############INICIALIZAÇÃO##################
 def paretoCalculate():
     packetSendTime = 30
     eton =   50 * (10 ** (-3))
