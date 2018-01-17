@@ -1,6 +1,6 @@
 import re
 
-from application_gen import createFile
+from application_gen import node_create
 from tgff_op import tsk_analyze
 
 
@@ -32,11 +32,8 @@ def main():
     tsk_analyze.output_matrix(mat_dep_send, tasks, send_matrix)
     tsk_analyze.output_matrix(mat_dep_receive, tasks, receive_matrix)
 
-    ##Pareto.paretoCalculate()
-
-    for i in ind_index:
-        dep_index = tsk_analyze.dep_indexes(i, mat_dep_send)
-        createFile.Envio(i, len(mat_dep_send[i]), dep_index)
+    node_create.ind_nodes(ind_index,mat_dep_send)
+    node_create.dep_nodes(mat_dep_send,mat_dep_receive)
 
     print('Indexes of IT:{}'.format(ind_index))
     print('Number of dependent tasks of task{}: {}'.format(ind_index[0], len(mat_dep_send[ind_index[0]])))

@@ -22,7 +22,7 @@ def Envio(noIndependente, numberDependentes, dependentPosition):
     arquivo.write('Message msg;\n')
     arquivo.write('int main()\n')
     arquivo.write('{\n')
-    arquivo.write(' int i, j,t;\n')
+    arquivo.write(' int i, j,t,b;\n')
     arquivo.write(' int valoresON[SYNTHETIC_ITERATIONS] = {};\n'.format(StrinON))
     arquivo.write(' int valoresOFF[SYNTHETIC_ITERATIONS] = {};\n'.format(StrinOFF))
     arquivo.write(' Echo("synthetic task {} started.");\n'.format(noIndependente))

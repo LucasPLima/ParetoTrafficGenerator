@@ -1,7 +1,10 @@
 import itertools
+import random
 
-myList = [0,1,2]
-myList2 = [0,1]
+myList = [0]
+myList2 = list(range(0,2))
+lst = []
+
 allCombinations = []
 allCombinations2 = []
 for theSize in range(1, len(myList)+1):
@@ -12,6 +15,6 @@ for theSize in range(1, len(myList2)+1):
     for combination in itertools.combinations(myList2, theSize):
         allCombinations2.append(combination)
 
-print(allCombinations)
+print(random.choice(allCombinations))
 print(allCombinations2)
 
