@@ -37,7 +37,6 @@ def main():
 
     print('Indexes of IT:{}'.format(ind_index))
     print('Number of dependent tasks of task{}: {}'.format(ind_index[0], len(mat_dep_send[ind_index[0]])))
-    print('Dependents of task{}:{}'.format(ind_index[0], dep_index))
     print(tasks)
 
     tgff.close()
