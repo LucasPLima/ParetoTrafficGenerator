@@ -6,13 +6,13 @@ from tgff_op import tsk_analyze
 
 def main():
     x = (int(input('Select the graph number:')))
-    tgff = open("tgff_files/creds1.tgff", "r")
+    tgff = open("tgff_files/simple.tgff", "r")
     tgff_n = tgff.readlines()
     send_matrix = open('outputMatrixes/SendMatrixGraph{}'.format(x), 'w')
     receive_matrix = open('outputMatrixes/ReceiveMatrixGraph{}'.format(x), 'w')
     inf = []  # Lista que irá armazenar as informações do grafo selecionado.
     tasks, ind_tasks= [], []  # tasks:lista que irá armazenar o número de tasks encontradas em inf[]|indTasks = lista de tasks independentes.|
-    ind_index, dep_index= [],[] #indIndex=Vetor que armazena os índices de tasks independentes. | #depIndex=Vetor que armazena os índices de tasks dependentes
+    ind_index= [] #indIndex=Vetor que armazena os índices de tasks independentes.
     dep = []  # Lista de dependências de tasks.
 
     t = re.compile('TASK t\d+_\d+')  # Operador de expressões regulares usado para encontrar as tasks.
@@ -27,7 +27,8 @@ def main():
     mat_dep_send = tsk_analyze.dest_list(tasks, dep, mat_dep_send)
     mat_dep_receive = tsk_analyze.recv_list(mat_dep_send,mat_dep_receive,tasks,x)
     ind_tasks = tsk_analyze.extract_ind(tasks, mat_dep_send, ind_tasks)
-    ind_index = tsk_analyze.ind_indexes(ind_tasks)
+
+    ind_index = tsk_analyze.indexes_of(ind_tasks)
 
     tsk_analyze.output_matrix(mat_dep_send, tasks, send_matrix)
     tsk_analyze.output_matrix(mat_dep_receive, tasks, receive_matrix)
@@ -37,7 +38,6 @@ def main():
 
     print('Indexes of IT:{}'.format(ind_index))
     print('Number of dependent tasks of task{}: {}'.format(ind_index[0], len(mat_dep_send[ind_index[0]])))
-    print(tasks)
 
     tgff.close()
     send_matrix.close()

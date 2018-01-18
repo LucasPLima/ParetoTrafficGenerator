@@ -6,7 +6,7 @@ import random
 
 def ind_nodes(ind_index, mat_dep):
     for i in ind_index:
-        dep_index = tsk_analyze.dep_indexes(i, mat_dep)
+        dep_index = tsk_analyze.indexes_of(i, mat_dep)
         createFile.Envio(i, len(mat_dep[i]), dep_index)
 
 
@@ -19,12 +19,12 @@ def dep_nodes(mat_dep_send, mat_dep_receive):
         while len(in_n)>0:
             t_in, t_out = rules_create(in_n, out_n)
             print('Task{}'.format(i))
-            for j in range(len(t_in)):
-                print('Receive of {}'.format(t_in[j]))
-                in_n.remove(t_in[j])
-            for k in range(len(t_out)):
-                print('Send to {}'.format(t_out[k]))
-                out_n.remove(t_out[k])
+            for j in t_in:
+                print('Receive of {}'.format(tsk_analyze.indexes_of([j])))
+                in_n.remove(j)
+            for k in t_out:
+                print('Send to {}'.format(tsk_analyze.indexes_of([k])))
+                out_n.remove(k)
 
 
 def rules_create(n_in, m_out):

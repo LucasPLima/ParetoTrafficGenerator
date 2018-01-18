@@ -72,15 +72,14 @@ def output_matrix(mat_dep, tasks, arq):
         arq.write('\n')
 
 
-def ind_indexes(ind_tasks):
-    indexes = []
-    for i in range(len(ind_tasks)):
-        indexes.append(int(ind_tasks[i].split('_')[1]))
-    return indexes
-
-
-def dep_indexes(ind_task, mat_dep):
-    dep = []
-    for i in range(len(mat_dep[ind_task])):
-        dep.append(int(mat_dep[ind_task][i].split('_')[1]))
-    return dep
+def indexes_of(*args):
+    if len(args)==1:
+        indexes = []
+        for i in range(len(args[0])):
+            indexes.append(int(args[0][i].split('_')[1]))
+        return indexes
+    else:
+        dep = []
+        for i in range(len(args[1][args[0]])):
+            dep.append(int((args[1][args[0]][i]).split('_')[1]))
+        return dep
