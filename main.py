@@ -6,7 +6,7 @@ from tgff_op import tsk_analyze
 
 def main():
     x = (int(input('Select the graph number:')))
-    tgff = open("tgff_files/simple.tgff", "r")
+    tgff = open("tgff_files/creds1.tgff", "r")
     tgff_n = tgff.readlines()
     send_matrix = open('outputMatrixes/SendMatrixGraph{}'.format(x), 'w')
     receive_matrix = open('outputMatrixes/ReceiveMatrixGraph{}'.format(x), 'w')

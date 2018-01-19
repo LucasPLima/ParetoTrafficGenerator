@@ -48,6 +48,26 @@ def Envio(noIndependente, numberDependentes, dependentPosition):
 pass
 
 
+def create_top(file):
+    file.write('#include <api.h>\n')
+    file.write('#include <stdlib.h>\n')
+    file.write('#include "syn_std.h"\n')
+    file.write('Message msg;\n')
+    file.write('int main()\n')
+    file.write('{\n')
+    file.write('	int i, j,t;\n')
+    file.write('	Echo("synthetic task C started.");\n')  ####
+    file.write('	Echo(itoa(GetTick()));\n')
+    file.write('for(i=0;i<SYNTHETIC_ITERATIONS;i++)\n')
+    file.write('{\n')
+    file.write('	msg.length = 30;\n')
+    file.write('	for(j=0;j<30;j++) msg.msg[j]=i;\n')
 
+def create_bottom(file):
+    file.write('}\n')
+    file.write('    Echo(itoa(GetTick()));\n')
+    file.write('    Echo("synthetic task C finished.");\n')  ####
+    file.write('	exit();\n')
+    file.write('}\n')
 
 

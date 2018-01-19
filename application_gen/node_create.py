@@ -16,15 +16,22 @@ def dep_nodes(mat_dep_send, mat_dep_receive):
     for i in range(iterations):
         in_n = mat_dep_receive[i]
         out_n = mat_dep_send[i]
+        file = open('task{}.c'.format(i), 'w')
+        createFile.create_top(file)
+
         while len(in_n)>0:
             t_in, t_out = rules_create(in_n, out_n)
-            print('Task{}'.format(i))
             for j in t_in:
-                print('Receive of {}'.format(tsk_analyze.indexes_of([j])))
+                file.write('Receive(&msg,task{});\n'.format(tsk_analyze.indexes_of([j])[0]))
                 in_n.remove(j)
             for k in t_out:
-                print('Send to {}'.format(tsk_analyze.indexes_of([k])))
+                file.write('	for(t=0;t<1000;t++)\n')
+                file.write('	{\n')
+                file.write('	}\n')
+                file.write('	Send(&msg,task{});\n'.format(tsk_analyze.indexes_of([k])[0]))
                 out_n.remove(k)
+        createFile.create_bottom(file)
+        file.close()
 
 
 def rules_create(n_in, m_out):
