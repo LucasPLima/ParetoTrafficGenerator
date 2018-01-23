@@ -7,7 +7,7 @@ def paretoCalculate():
     eton =   50 * (10 ** (-3))
     etoff =  40 * (10 ** (-3))
     h = 0.75
-    simulationTime = 1000 ## É PRECISO CRIAR UM LIMITE, QUE SEJA DE TAMANHO IGUAL AO SYNTHETIC INTERATIONS
+    simulationTime = 100000 ## É PRECISO CRIAR UM LIMITE, QUE SEJA DE TAMANHO IGUAL AO SYNTHETIC INTERATIONS
     time = 0
 
     aux = 5

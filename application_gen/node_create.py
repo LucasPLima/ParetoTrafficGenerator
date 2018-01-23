@@ -4,13 +4,13 @@ import itertools
 import random
 
 
-def ind_nodes(ind_index, mat_dep):
+def ind_nodes(ind_index, mat_dep, local):
     for i in ind_index:
         dep_index = tsk_analyze.indexes_of(i, mat_dep)
-        createFile.Envio(i, len(mat_dep[i]), dep_index)
+        createFile.Envio(i, len(mat_dep[i]), dep_index, local)
 
 
-def dep_nodes(mat_dep_send, mat_dep_receive, ind_index):
+def dep_nodes(mat_dep_send, mat_dep_receive, ind_index, local):
     iterations = len(mat_dep_send)
 
     for i in range(iterations):
@@ -19,7 +19,7 @@ def dep_nodes(mat_dep_send, mat_dep_receive, ind_index):
         if i in ind_index:
             pass
         else:
-            file = open('task{}.c'.format(i), 'w')
+            file = open('{}/task{}.c'.format(local, i), 'w')
             createFile.create_top(file, i)
 
             while len(in_n)>0:

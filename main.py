@@ -1,6 +1,8 @@
 import re
 
-from application_gen import node_create
+import os
+
+from application_gen import node_create,app_manager
 from tgff_op import tsk_analyze
 
 
@@ -33,11 +35,12 @@ def main():
     tsk_analyze.output_matrix(mat_dep_send, tasks, send_matrix)
     tsk_analyze.output_matrix(mat_dep_receive, tasks, receive_matrix)
 
+    '''
     node_create.ind_nodes(ind_index,mat_dep_send)
     node_create.dep_nodes(mat_dep_send,mat_dep_receive,ind_index)
-
-    print('Indexes of IT:{}'.format(ind_index))
-    print('Number of dependent tasks of task{}: {}'.format(ind_index[0], len(mat_dep_send[ind_index[0]])))
+    '''
+    local = os.path.dirname('app{}/'.format(x))
+    app_manager.create_versions(ind_index, mat_dep_send,mat_dep_receive, local,x)
 
     tgff.close()
     send_matrix.close()

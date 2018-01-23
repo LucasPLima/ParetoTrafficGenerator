@@ -8,14 +8,14 @@ from application_gen import paretoGen
 
 ##TaskA = Task0 ; TaskB = Task1 ...
 
-def Envio(noIndependente, numberDependentes, dependentPosition):
+def Envio(noIndependente, numberDependentes, dependentPosition, local):
     valoresON, valoresOFF = paretoGen.paretoCalculate()
     StrinON = '{' + ','.join(str(e) for e in valoresON) + '}'
     StrinOFF = '{' + ','.join(str(e) for e in valoresOFF) + '}'
     a = list(string.ascii_uppercase)
     print(a)
     b = list(string.ascii_uppercase)
-    arquivo = open('task{}.c'.format(noIndependente), 'w') ## -1 POIS O VETOR COMEÇA NA POSIÇÃO 0
+    arquivo = open('{}/task{}.c'.format(local, noIndependente), 'w') ## -1 POIS O VETOR COMEÇA NA POSIÇÃO 0
     arquivo.write('#include <api.h>\n')
     arquivo.write('#include <stdlib.h>\n')
     arquivo.write('#include "syn_std.h"\n')
