@@ -14,7 +14,6 @@ def main():
     receive_matrix = open('outputMatrixes/ReceiveMatrixGraph{}'.format(x), 'w')
     inf = []  # Lista que irá armazenar as informações do grafo selecionado.
     tasks, ind_tasks= [], []  # tasks:lista que irá armazenar o número de tasks encontradas em inf[]|indTasks = lista de tasks independentes.|
-    ind_index= [] #indIndex=Vetor que armazena os índices de tasks independentes.
     dep = []  # Lista de dependências de tasks.
 
     t = re.compile('TASK t\d+_\d+')  # Operador de expressões regulares usado para encontrar as tasks.
@@ -35,10 +34,6 @@ def main():
     tsk_analyze.output_matrix(mat_dep_send, tasks, send_matrix)
     tsk_analyze.output_matrix(mat_dep_receive, tasks, receive_matrix)
 
-    '''
-    node_create.ind_nodes(ind_index,mat_dep_send)
-    node_create.dep_nodes(mat_dep_send,mat_dep_receive,ind_index)
-    '''
     local = os.path.dirname('app{}/'.format(x))
     app_manager.create_versions(ind_index, mat_dep_send,mat_dep_receive, local,x)
 
