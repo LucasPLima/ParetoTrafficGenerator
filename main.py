@@ -10,6 +10,7 @@ def main():
     x = (int(input('Select the graph number:')))
     tgff = open("tgff_files/creds1.tgff", "r")
     tgff_n = tgff.readlines()
+    local = os.path.dirname('app{}/'.format(x))
     send_matrix = open('outputMatrixes/SendMatrixGraph{}'.format(x), 'w')
     receive_matrix = open('outputMatrixes/ReceiveMatrixGraph{}'.format(x), 'w')
     inf = []  # Lista que irá armazenar as informações do grafo selecionado.
@@ -34,8 +35,7 @@ def main():
     tsk_analyze.output_matrix(mat_dep_send, tasks, send_matrix)
     tsk_analyze.output_matrix(mat_dep_receive, tasks, receive_matrix)
 
-    local = os.path.dirname('app{}/'.format(x))
-    app_manager.create_versions(ind_index, mat_dep_send,mat_dep_receive, local,x)
+    app_manager.create_versions(ind_index, mat_dep_send,mat_dep_receive, local, x)
 
     tgff.close()
     send_matrix.close()

@@ -12,11 +12,16 @@ def ind_nodes(ind_index, mat_dep, local):
 
 def dep_nodes(mat_dep_send, mat_dep_receive, ind_index, local):
     iterations = len(mat_dep_send)
-
+    cfg = open('{}/app.cfg'.format(local), 'w')
     for i in range(iterations):
         in_n = mat_dep_receive[i]
         out_n = mat_dep_send[i]
         if i in ind_index:
+            cfg.write('Independent: task{} \n'.format(i))
+            cfg.write('Send to: ')
+            for j in mat_dep_send[i]:
+                cfg.write('{}\t'.format(j))
+            cfg.write('\n')
             pass
         else:
             file = open('{}/task{}.c'.format(local, i), 'w')
@@ -24,17 +29,26 @@ def dep_nodes(mat_dep_send, mat_dep_receive, ind_index, local):
 
             while len(in_n)>0:
                 t_in, t_out = rules_create(in_n, out_n)
+                cfg.write('task{}\n'.format(i))
+                cfg.write('Receive of:')
                 for j in t_in:
                     file.write('Receive(&msg,task{});\n'.format(tsk_analyze.indexes_of([j])[0]))
+                    cfg.write('{}\t'.format(j))
                     in_n.remove(j)
+                cfg.write('\n')
+                cfg.write('Send to:')
                 for k in t_out:
                     file.write('	for(t=0;t<1000;t++)\n')
                     file.write('	{\n')
                     file.write('	}\n')
                     file.write('	Send(&msg,task{});\n'.format(tsk_analyze.indexes_of([k])[0]))
+                    cfg.write('{}\t'.format(k))
                     out_n.remove(k)
+                cfg.write('\n')
             createFile.create_bottom(file, i)
+            cfg.write('\n')
             file.close()
+    cfg.close()
 
 
 def rules_create(n_in, m_out):
