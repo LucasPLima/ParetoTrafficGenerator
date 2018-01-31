@@ -4,8 +4,8 @@ import random
 ###############INICIALIZAÇÃO##################
 def paretoCalculate():
     packetSendTime = 30
-    eton = 50 * (10 ** (-3))
-    etoff = 40 * (10 ** (-3))
+    eton = 50 * (10 ** (-6))
+    etoff = 60 * (10 ** (-6))
     h = 0.75
     simulationTime = 100000 ## É PRECISO CRIAR UM LIMITE, QUE SEJA DE TAMANHO IGUAL AO SYNTHETIC INTERATIONS
     time = 0
@@ -24,18 +24,22 @@ def paretoCalculate():
 
         ton = pON * packetSendTime
         toff = pOFF * packetSendTime
-        print(ton, toff)
+
+        print('Tempo de envio:{}\tTempo ocioso:{}'.format(pON,pOFF))
 
         for i in range(pON):
-            print('Envia Pacote{}'.format(i+1))
-            pass
-        print('Tempo Ocioso: {}'.format(toff))
 
-        valoresON.append(ton)
-        valoresOFF.append(toff)
+            pass
+
+
+        valoresON.append(pON)
+        valoresOFF.append(pOFF)
 
         time = time + toff + ton
+    print(len(valoresON), len(valoresOFF))
 
     return (valoresON, valoresOFF)
     ##################PARETO######################
 
+if __name__ == '__main__':
+    paretoCalculate()

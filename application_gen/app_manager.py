@@ -30,8 +30,9 @@ def create_versions(ind_index, mat_dep_send, mat_dep_receive, local, i):
                 o_version = os.path.dirname('{}/app{}_{}/'.format(local, i, j))
 
                 for k in files:
-                    src = '{}/{}'.format(f_version, k)
-                    copy2(src, o_version)
+                    if 'cfg' not in k:
+                        src = '{}/{}'.format(f_version, k)
+                        copy2(src, o_version)
                 node_create.ind_nodes(ind_index, mat_dep_send, o_version)
                 if e.errno != errno.EEXIST:
                     raise
@@ -52,16 +53,18 @@ def create_versions(ind_index, mat_dep_send, mat_dep_receive, local, i):
                 os.makedirs(o_version)
 
                 for k in files:
-                    src = '{}/{}'.format(f_version, k)
-                    copy2(src, o_version)
+                    if 'cfg' not in k:
+                        src = '{}/{}'.format(f_version, k)
+                        copy2(src, o_version)
                 node_create.ind_nodes(ind_index, mat_dep_send, o_version)
 
             except OSError as e:
                 o_version = os.path.dirname('{}/app{}_{}/'.format(local, i, j))
 
                 for k in files:
-                    src = '{}/{}'.format(f_version, k)
-                    copy2(src, o_version)
+                    if 'cfg' not in k:
+                        src = '{}/{}'.format(f_version, k)
+                        copy2(src, o_version)
                 node_create.ind_nodes(ind_index, mat_dep_send, o_version)
                 if e.errno != errno.EEXIST:
                     raise
