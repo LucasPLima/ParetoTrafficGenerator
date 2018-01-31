@@ -3,11 +3,11 @@ import random
 
 ###############INICIALIZAÇÃO##################
 def paretoCalculate():
-    packetSendTime = 30
-    eton = 50 * (10 ** (-6))
-    etoff = 60 * (10 ** (-6))
-    h = 0.75
-    simulationTime = 100000 ## É PRECISO CRIAR UM LIMITE, QUE SEJA DE TAMANHO IGUAL AO SYNTHETIC INTERATIONS
+    packetSendTime = random.uniform(0.01, 0.05)
+    eton = 0.04
+    etoff = 0.05
+    h = random.uniform(0.5,1)
+    simulationTime = 100 ## É PRECISO CRIAR UM LIMITE, QUE SEJA DE TAMANHO IGUAL AO SYNTHETIC INTERATIONS
     time = 0
 
     valoresON = []
@@ -36,7 +36,7 @@ def paretoCalculate():
         valoresOFF.append(pOFF)
 
         time = time + toff + ton
-    print(len(valoresON), len(valoresOFF))
+    print(len(valoresON), len(valoresOFF), h, packetSendTime, eton, etoff)
 
     return (valoresON, valoresOFF)
     ##################PARETO######################
