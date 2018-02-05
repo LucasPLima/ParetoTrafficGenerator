@@ -12,19 +12,17 @@ def Envio(noIndependente, numberDependentes, dependentPosition, local):
     valoresON, valoresOFF = paretoGen.paretoCalculate()
     StrinON = '{' + ','.join(str(e) for e in valoresON) + '}'
     StrinOFF = '{' + ','.join(str(e) for e in valoresOFF) + '}'
-    a = list(string.ascii_uppercase)
-    print(a)
-    b = list(string.ascii_uppercase)
-    arquivo = open('{}/task{}.c'.format(local, noIndependente), 'w') ## -1 POIS O VETOR COMEÇA NA POSIÇÃO 0
+
+    arquivo = open('{}/task{}.c'.format(local, noIndependente), 'w')
     arquivo.write('#include <api.h>\n')
     arquivo.write('#include <stdlib.h>\n')
     arquivo.write('#include "syn_std.h"\n')
     arquivo.write('Message msg;\n')
+    arquivo.write('const unsigned char valoresON[SYNTHETIC_ITERATIONS] = {};\n'.format(StrinON))
+    arquivo.write('const unsigned char valoresOFF[SYNTHETIC_ITERATIONS] = {};\n'.format(StrinOFF))
     arquivo.write('int main()\n')
     arquivo.write('{\n')
     arquivo.write(' int i, j,t,b;\n')
-    arquivo.write(' int valoresON[SYNTHETIC_ITERATIONS] = {};\n'.format(StrinON))
-    arquivo.write(' int valoresOFF[SYNTHETIC_ITERATIONS] = {};\n'.format(StrinOFF))
     arquivo.write(' Echo("synthetic task {} started.");\n'.format(noIndependente))
     arquivo.write(' Echo(itoa(GetTick()));\n')
 
