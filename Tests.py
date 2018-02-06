@@ -21,8 +21,10 @@ def main():
         for combination in itertools.combinations(myList2, theSize):
             allCombinations2.append(combination)
 
-    print(random.choice(allCombinations))
-    print(allCombinations2)
+    myList2_cp = myList2[1:]
+    #print(random.choice(allCombinations))
+    #print(allCombinations2)
+    print(myList2_cp)
 
 if __name__ == '__main__':
     main()

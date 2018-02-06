@@ -4,7 +4,7 @@ import random
 ###############INICIALIZAÇÃO##################
 def paretoCalculate():
     packetSendTime = random.uniform(0.01, 0.05)
-    eton = 0.04
+    eton = 0.1
     etoff = 0.05
     h = random.uniform(0.5,1)
     simulationTime = 100 ## É PRECISO CRIAR UM LIMITE, QUE SEJA DE TAMANHO IGUAL AO SYNTHETIC INTERATIONS
@@ -27,16 +27,17 @@ def paretoCalculate():
 
         print('Tempo de envio:{}\tTempo ocioso:{}'.format(pON,pOFF))
 
-        for i in range(pON):
+        if pON > 255:
+            pON = 255
 
-            pass
-
+        if pOFF> 255:
+            pOFF = 255
 
         valoresON.append(pON)
         valoresOFF.append(pOFF)
 
         time = time + toff + ton
-    print(len(valoresON), len(valoresOFF), h, packetSendTime, eton, etoff)
+    print(len(valoresON), len(valoresOFF), h, packetSendTime)
 
     return (valoresON, valoresOFF)
     ##################PARETO######################
