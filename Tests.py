@@ -1,30 +1,21 @@
 import itertools
 import random
-
-def func_test(*args):
-    print("Length ={}".format(len(args)))
-    print(args[0][2])
+from application_gen import paretoGen
 
 
 def main():
-    myList = [0]
-    myList2 = [0,4,5,2]
-    lst = []
-    func_test(myList2)
-    allCombinations = []
-    allCombinations2 = []
-    for theSize in range(1, len(myList)+1):
-        for combination in itertools.combinations(myList, theSize):
-            allCombinations.append(combination)
+    a, b = paretoGen.paretoCalculate()
+    print(sum(a))
+    c = sum(a)
+    d = []
+    for i in range(4):
+        e = round(sum(a)/5)
+        d.append(e)
+        c = c-e
 
-    for theSize in range(1, len(myList2)+1):
-        for combination in itertools.combinations(myList2, theSize):
-            allCombinations2.append(combination)
+    d.append(c)
 
-    myList2_cp = myList2[1:]
-    #print(random.choice(allCombinations))
-    #print(allCombinations2)
-    print(myList2_cp)
+    print(d)
 
 if __name__ == '__main__':
     main()
