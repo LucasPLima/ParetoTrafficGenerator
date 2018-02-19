@@ -37,10 +37,11 @@ def paretoCalculate():
         valoresOFF.append(pOFF)
 
         time = time + toff + ton
-    print(len(valoresON), len(valoresOFF), h, packetSendTime)
 
-    return (valoresON, valoresOFF)
-    ##################PARETO######################
+    print(len(valoresON), sum(valoresON), h, packetSendTime)
+
+    return valoresON, valoresOFF
+
 
 if __name__ == '__main__':
     paretoCalculate()

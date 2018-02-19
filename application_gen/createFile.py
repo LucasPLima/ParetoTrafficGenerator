@@ -10,8 +10,11 @@ from application_gen import paretoGen
 
 def Envio(noIndependente, numberDependentes, dependentPosition, local):
     valoresON, valoresOFF = paretoGen.paretoCalculate()
+
     StrinON = '{' + ','.join(str(e) for e in valoresON) + '}'
     StrinOFF = '{' + ','.join(str(e) for e in valoresOFF) + '}'
+    syn = open('{}/syn_std.h'.format(local), 'w')
+    create_syn_std(syn, len(valoresON))
 
     arquivo = open('{}/task{}.c'.format(local, noIndependente), 'w')
     arquivo.write('#include <api.h>\n')
@@ -43,6 +46,9 @@ def Envio(noIndependente, numberDependentes, dependentPosition, local):
     arquivo.write('exit();\n')
     arquivo.write('}\n')
 
+    arquivo.close()
+    syn.close()
+
 pass
 
 
@@ -68,5 +74,14 @@ def create_bottom(file,i):
     file.write('    Echo("synthetic task {} finished.");\n'.format(i))  ####
     file.write('	exit();\n')
     file.write('}\n')
+
+
+def create_syn_std(file, iterations):
+    file.write('#ifndef SYN_STD_H_\n')
+    file.write('#define SYN_STD_H_\n\n\n')
+    file.write('#define SYNTHETIC_ITERATIONS\t{}\n\n'.format(iterations))
+    file.write('#endif')
+
+
 
 
