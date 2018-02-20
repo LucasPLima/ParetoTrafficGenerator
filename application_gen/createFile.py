@@ -1,10 +1,8 @@
-import string
-
 from application_gen import paretoGen
 
 
-##Quais os nós dependentes?
-##Quantos nós dependentes?
+# Quais os nós dependentes?
+# Quantos nós dependentes?
 
 ##TaskA = Task0 ; TaskB = Task1 ...
 
@@ -25,25 +23,25 @@ def Envio(noIndependente, numberDependentes, dependentPosition, local):
     arquivo.write('const unsigned char valoresOFF[SYNTHETIC_ITERATIONS] = {};\n'.format(StrinOFF))
     arquivo.write('int main()\n')
     arquivo.write('{\n')
-    arquivo.write(' int i, j,t,b;\n')
-    arquivo.write(' Echo("synthetic task {} started.");\n'.format(noIndependente))
-    arquivo.write(' Echo(itoa(GetTick()));\n')
+    arquivo.write('\tint i, j,t,b;\n')
+    arquivo.write('\tEcho("synthetic task {} started.");\n'.format(noIndependente))
+    arquivo.write('\tEcho(itoa(GetTick()));\n')
 
     for i in range(numberDependentes):
-            arquivo.write(' for(i=0;i<SYNTHETIC_ITERATIONS;i++){\n')
-            arquivo.write('     for(t=0;t<valoresOFF[i];t++){\n')
-            arquivo.write('     }\n')
-            arquivo.write('     msg.length = 30;\n')
-            arquivo.write('     for(j=0;j<30;j++) msg.msg[j]=i;\n')
-            arquivo.write('     for(b=0;b<valoresON[i];b++){\n')
-            arquivo.write('         Send(&msg,task{});\n'.format(dependentPosition[i])) ##Como pegar a posição para o dependente?
-            arquivo.write('     }\n')
-            arquivo.write('}\n')
+            arquivo.write('\tfor(i=0;i<SYNTHETIC_ITERATIONS;i++){\n')
+            arquivo.write('\t\tfor(t=0;t<valoresOFF[i];t++){\n')
+            arquivo.write('\t\t}\n')
+            arquivo.write('\t\tmsg.length = 30;\n')
+            arquivo.write('\t\tfor(j=0;j<30;j++) msg.msg[j]=i;\n')
+            arquivo.write('\t\t\tfor(b=0;b<valoresON[i];b++){\n')
+            arquivo.write('\t\t\t\tSend(&msg,task{});\n'.format(dependentPosition[i])) # Como pegar a posição para o dependente?
+            arquivo.write('\t\t\t}\n')
+            arquivo.write('\t}\n')
             pass
 
-    arquivo.write('Echo(itoa(GetTick()));\n')
-    arquivo.write('Echo("synthetic task {} finished.");\n'.format(noIndependente))
-    arquivo.write('exit();\n')
+    arquivo.write('\tEcho(itoa(GetTick()));\n')
+    arquivo.write('\tEcho("synthetic task {} finished.");\n'.format(noIndependente))
+    arquivo.write('\texit();\n')
     arquivo.write('}\n')
 
     arquivo.close()

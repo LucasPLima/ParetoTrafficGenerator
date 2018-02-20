@@ -37,6 +37,8 @@ def main():
 
     app_manager.create_versions(ind_index, mat_dep_send,mat_dep_receive, local, x)
 
+    print('Aplicação gerada.')
+
     tgff.close()
     send_matrix.close()
     receive_matrix.close()

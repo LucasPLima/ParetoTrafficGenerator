@@ -25,8 +25,6 @@ def paretoCalculate():
         ton = pON * packetSendTime
         toff = pOFF * packetSendTime
 
-        print('Tempo de envio:{}\tTempo ocioso:{}'.format(pON,pOFF))
-
         if pON > 255:
             pON = 255
 
@@ -37,8 +35,6 @@ def paretoCalculate():
         valoresOFF.append(pOFF)
 
         time = time + toff + ton
-
-    print(len(valoresON), sum(valoresON), h, packetSendTime)
 
     return valoresON, valoresOFF
 
