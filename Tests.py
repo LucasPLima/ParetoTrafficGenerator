@@ -20,23 +20,25 @@ def main():
     print(d)
     '''
     j = len(a)
-    a = round(j/5)
+    b = 4
+    a = round(j/b)
     ctr.append(a)
-    for i in range(2,5):
+    for i in range(2, b):
         ctr.append(a*i)
     print(ctr)
 
-    if j % 5 == 4 or j % 5 == 3:
-        for i in range(len(ctr)):
-            ctr[i] = ctr[i]-1
+    # if j % b == b-2 or j % b == b-1:
+    #     for i in range(len(ctr)):
+    #         ctr[i] = ctr[i] - (b-(j % b))
 
     print(ctr)
-    print(ctr[0], ctr[1], ctr[2], ctr[3])
 
     for i in range(ctr[0]):
-        print('a={}\tb ={}\tc={}\td={}\te={}'.format(i, (i + ctr[0]), (i + ctr[1]), (i + ctr[2]), (i + ctr[3])))
+        print('a={}\tb={}\tc={}\td={}'.format(i, (i + ctr[0]), (i+ctr[1]), (i+ctr[2])))
 
-    print(j)
-    print(j % 5)
+    print(j-1)
+    print(j % b)
+
+
 if __name__ == '__main__':
     main()
