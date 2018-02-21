@@ -8,6 +8,7 @@ from application_gen import paretoGen
 
 def Envio(noIndependente, numberDependentes, dependentPosition, local):
     valoresON, valoresOFF = paretoGen.paretoCalculate()
+    aux = create_ctr(len(valoresON),numberDependentes)
 
     StrinON = '{' + ','.join(str(e) for e in valoresON) + '}'
     StrinOFF = '{' + ','.join(str(e) for e in valoresOFF) + '}'
@@ -33,7 +34,7 @@ def Envio(noIndependente, numberDependentes, dependentPosition, local):
             arquivo.write('\t\t}\n')
             arquivo.write('\t\tmsg.length = 30;\n')
             arquivo.write('\t\tfor(j=0;j<30;j++) msg.msg[j]=i;\n')
-            arquivo.write('\t\t\tfor(b=0;b<valoresON[i];b++){\n')
+            arquivo.write('\t\tfor(b=0;b<valoresON[i];b++){\n')
             arquivo.write('\t\t\t\tSend(&msg,task{});\n'.format(dependentPosition[i])) # Como pegar a posição para o dependente?
             arquivo.write('\t\t\t}\n')
             arquivo.write('\t}\n')
@@ -79,6 +80,19 @@ def create_syn_std(file, iterations):
     file.write('#define SYN_STD_H_\n\n\n')
     file.write('#define SYNTHETIC_ITERATIONS\t{}\n\n'.format(iterations))
     file.write('#endif')
+
+
+def create_ctr(a_size, n_dep):
+    aux = []
+    a = round(a_size/n_dep)
+    aux.append(a)
+    for i in range(2,n_dep+1):
+        aux.append(a*i)
+
+    if j % 5 == 4 or j % 5 == 3:
+        aux[-1] = aux[-1]-1
+
+    return aux
 
 
 
