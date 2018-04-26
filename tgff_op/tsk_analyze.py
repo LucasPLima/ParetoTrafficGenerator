@@ -1,8 +1,8 @@
 def matrix_create(nl):
     matrix = []
     for i in range(nl):
-        l = []
-        matrix.append(l)
+        lin = []
+        matrix.append(lin)
     return matrix
 
 
@@ -30,18 +30,18 @@ def inf_extract(graph_list, task_list, dep_list, task_pattern, dep_pattern):
 def dest_list(task_list, dep_list, mat_dep):
     for i in range(len(task_list)):
         for j in range(len(dep_list)):
-            if task_list[i] == dep_list[j][0]:  # compara as tarefas ao índice de dependências para criar uma lista de destinatários, com base nas tarefas relacionadas.
+            if task_list[i] == dep_list[j][0]:# compara as tarefas ao índice de dependências para criar uma lista de destinatários, com base nas tarefas relacionadas.
                 mat_dep[i].append(dep_list[j][1])  # indexa ao índice correspondente a tarefa, seus destinatários.
     return mat_dep
 
 
-def recv_list(mat_dep_send, mat_dep_receive, task_list, graph_ind):
+def recv_list(task_list, dep_list , mat_dep_receive):
     for i in range(len(task_list)):
-        for j in range(len(mat_dep_send)):
-            for k in range(len(mat_dep_send[j])):
-                if(task_list[i]==mat_dep_send[j][k]):
-                    mat_dep_receive[i].append('t{}_{}'.format(graph_ind, j))
+        for j in range(len(dep_list)):
+            if task_list[i] == dep_list[j][1]:# compara as tarefas ao índice de dependências para criar uma lista de destinatários, com base nas tarefas relacionadas.
+                mat_dep_receive[i].append(dep_list[j][0])  # indexa ao índice correspondente a tarefa, seus destinatários.
     return mat_dep_receive
+
 
 
 def extract_ind(task_list, mat_dep, ind_list):
@@ -73,7 +73,7 @@ def output_matrix(mat_dep, tasks, arq):
 
 
 def indexes_of(*args):
-    if len(args)==1:
+    if len(args) == 1:
         indexes = []
         for i in range(len(args[0])):
             indexes.append(int(args[0][i].split('_')[1]))
