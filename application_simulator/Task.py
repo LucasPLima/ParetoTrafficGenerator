@@ -3,6 +3,7 @@ from string import ascii_letters
 
 
 class Task(object):
+
     def __init__(self, task_n, independent=False, latency=0):
         self.task_n = task_n
         self.independent = independent
@@ -21,12 +22,13 @@ class Task(object):
         package[1].append(self.random_char(8))
         self.outBuffer.append(package)
 
-    def send_packets(self):
+    def send_packets(self, tasks):
         while not self.is_empty(self.outBuffer):
             s = self.outBuffer.pop()
-            
-
-
+            for i in tasks:
+                if i.self.task_n == s[0]:
+                    s[0] = self.task_n
+                    i.self.inBuffer.append(s)
 
     def random_char(self, y):
         return ''.join(choice(ascii_letters) for x in range(y))
