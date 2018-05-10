@@ -11,7 +11,7 @@ class Task(object):
         self.inBuffer = []
         self.outBuffer = []
 
-    def is_empty(self, buffer):
+    def is_empty(buffer):
         if len(buffer) != 0:
             return False
         return True

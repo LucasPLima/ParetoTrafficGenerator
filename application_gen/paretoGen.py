@@ -1,13 +1,12 @@
 import random
 
 
-###############INICIALIZAÇÃO##################
 def paretoCalculate():
     packetSendTime = random.uniform(0.01, 0.05)
     eton = 0.1
     etoff = 0.05
     h = random.uniform(0.5,1)
-    simulationTime = 100 ## É PRECISO CRIAR UM LIMITE, QUE SEJA DE TAMANHO IGUAL AO SYNTHETIC INTERATIONS
+    simulationTime = 1000
     time = 0
 
     valoresON = []
@@ -40,4 +39,5 @@ def paretoCalculate():
 
 
 if __name__ == '__main__':
-    paretoCalculate()
+    on, off = paretoCalculate()
+    print(len(on), len(off))

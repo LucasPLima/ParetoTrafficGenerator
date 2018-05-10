@@ -12,7 +12,6 @@ class Simulator(object):
         self.send_mat = list(map(tsk_analyze.indexes_of, send_mat))
         self.depTable = []
 
-        self.init_rules(len(tasks), self.receive_mat, self.send_mat)
 
     def init_rules(self, n_tasks, rcv_m, snd_m):
         for i in range(n_tasks):
@@ -32,15 +31,39 @@ class Simulator(object):
     def run_Simulation(self):
         actual_time = 0
         i = 0
+        self.init_rules(len(self.tasks), self.receive_mat, self.send_mat)
 
         while actual_time < self.time:
             actual_task = self.tasks[i]
 
-            if actual_task.self.independent:
-                print()
-
+            if not actual_task.self.independent:
+                if actual_task.self.is_empty(actual_task.self.inBuffer):
+                    if actual_task.self.is_empty(actual_task.self.outBuffer):
+                        i = self.select_task(i)
+                    else:
+                        actual_task.self.send_packets(self.tasks)
+                        i = self.select_task(i)
+                else:
+                    rule = self.find_rules(actual_task.self.inBuffer, self.filter_rules(i))
+                    while len(rule) > 0:
+                        for package in actual_task.self.inBuffer:
+                            if package[0] in rule[1]:
+                                actual_task.self.inBuffer.remove(package)
+                        for receiver in rule[2]:
+                            actual_task.self.fill_buffer(receiver)
+                        rule = self.find_rules(actual_task.self.inBuffer, self.filter_rules(i))
+                    actual_task.self.send_packets(self.tasks)
+                    i = self.select_task(i)
+            else:
+                if actual_task.self.is_empty(actual_task.self.outBuffer):
+                    #TODO
+                    print()
 
     #def run_Activity(self):
+    def select_task(self, index):
+        if index < len(self.tasks)-1:
+            return index+1
+        return 0
 
     def find_rules(self, in_buffer, rules):
         sources = []
