@@ -1,4 +1,5 @@
 from application_gen import node_create as utils
+from application_gen import paretoGen
 from tgff_op import tsk_analyze
 from itertools import combinations
 
@@ -11,7 +12,6 @@ class Simulator(object):
         self.receive_mat = list(map(tsk_analyze.indexes_of, receive_mat))
         self.send_mat = list(map(tsk_analyze.indexes_of, send_mat))
         self.depTable = []
-
 
     def init_rules(self, n_tasks, rcv_m, snd_m):
         for i in range(n_tasks):
@@ -27,40 +27,58 @@ class Simulator(object):
                     in_tasks.remove(t)
                 for t in t_out:
                     out_tasks.remove(t)
+        return
 
     def run_Simulation(self):
         actual_time = 0
-        i = 0
+        i, on, off = 0, 0, 0
         self.init_rules(len(self.tasks), self.receive_mat, self.send_mat)
 
         while actual_time < self.time:
             actual_task = self.tasks[i]
 
             if not actual_task.self.independent:
-                if actual_task.self.is_empty(actual_task.self.inBuffer):
-                    if actual_task.self.is_empty(actual_task.self.outBuffer):
-                        i = self.select_task(i)
-                    else:
-                        actual_task.self.send_packets(self.tasks)
-                        i = self.select_task(i)
-                else:
-                    rule = self.find_rules(actual_task.self.inBuffer, self.filter_rules(i))
-                    while len(rule) > 0:
-                        for package in actual_task.self.inBuffer:
-                            if package[0] in rule[1]:
-                                actual_task.self.inBuffer.remove(package)
-                        for receiver in rule[2]:
-                            actual_task.self.fill_buffer(receiver)
-                        rule = self.find_rules(actual_task.self.inBuffer, self.filter_rules(i))
-                    actual_task.self.send_packets(self.tasks)
-                    i = self.select_task(i)
+                self.run_dependent_task(actual_task)
+                i = self.next_task(i)
             else:
-                if actual_task.self.is_empty(actual_task.self.outBuffer):
-                    #TODO
-                    print()
+                actual_task.self.send_packets(self.tasks)
+                if on < p_on:
+                    on += 1
+                    for receiver in self.send_mat[actual_task.self.task_n]:
+                        actual_task.self.fill_buffer(receiver)
+                    actual_task.self.send_packets(self.tasks)
+                    i = self.next_task(i)
+                elif off < p_off:
+                    off += 1
+                    i = self.next_task(i)
+                else:
+                    on, off = 0, 0
+                    p_on, p_off = self.pareto_periods()
+                    i = self.next_task(i)
+                print()
 
-    #def run_Activity(self):
-    def select_task(self, index):
+    def run_dependent_task(self, task):
+        if task.self.is_empty(task.self.inBuffer):
+            if task.self.is_empty(task.self.outBuffer):
+                return
+            else:
+                task.self.send_packets(self.tasks)
+                return
+        else:
+            rule = self.find_rules(task.self.inBuffer, self.filter_rules(task.self.task_n))
+            while len(rule) > 0:
+                for package in task.self.inBuffer:
+                    if package[0] in rule[1]:
+                        task.self.inBuffer.remove(package)
+                for receiver in rule[2]:
+                    task.self.fill_buffer(receiver)
+                rule = self.find_rules(task.self.inBuffer, self.filter_rules(task.self.task_n))
+            task.self.send_packets(self.tasks)
+            return
+
+    #def run_independent_task(self):
+
+    def next_task(self, index):
         if index < len(self.tasks)-1:
             return index+1
         return 0

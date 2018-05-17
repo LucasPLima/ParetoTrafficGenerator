@@ -39,5 +39,4 @@ def paretoCalculate():
 
 
 if __name__ == '__main__':
-    on, off = paretoCalculate()
-    print(len(on), len(off))
+    paretoCalculate()

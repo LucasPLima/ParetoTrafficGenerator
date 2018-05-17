@@ -1,19 +1,10 @@
-import itertools
-import random
-from application_gen import paretoGen
-
+def yieldtest():
+    for i in range(4):
+        yield i
 
 def main():
-    combinations_in = []
-    ns = range(4)
-
-    for i in range(1, len(ns) + 1):
-        for combination in itertools.combinations(ns, i):
-            combinations_in.append(tuple(sorted(combination)))
-
-    print(combinations_in)
-
-    print(tuple(sorted((0, 4, 2))) == (0, 2, 4))
+    print(next(yieldtest()))
+    print(next(yieldtest()))
 
     '''
     print(sum(a))
