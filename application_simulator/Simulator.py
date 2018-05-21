@@ -1,5 +1,4 @@
 from application_gen import node_create as utils
-from application_gen import paretoGen
 from tgff_op import tsk_analyze
 from itertools import combinations
 
@@ -12,6 +11,11 @@ class Simulator(object):
         self.receive_mat = list(map(tsk_analyze.indexes_of, receive_mat))
         self.send_mat = list(map(tsk_analyze.indexes_of, send_mat))
         self.depTable = []
+        self.control_periods = [0] * len(self.tasks)
+
+        for task in self.tasks:
+            if task.independent:
+                self.control_periods[task.task_n] = [None, None]
 
     def init_rules(self, n_tasks, rcv_m, snd_m):
         for i in range(n_tasks):
@@ -27,11 +31,11 @@ class Simulator(object):
                     in_tasks.remove(t)
                 for t in t_out:
                     out_tasks.remove(t)
-        return
 
     def run_Simulation(self):
-        actual_time = 0
-        i, on, off = 0, 0, 0
+        actual_time = 1
+        i = 0
+        periods = [0, 0]
         self.init_rules(len(self.tasks), self.receive_mat, self.send_mat)
 
         while actual_time < self.time:
@@ -41,42 +45,53 @@ class Simulator(object):
                 self.run_dependent_task(actual_task)
                 i = self.next_task(i)
             else:
-                actual_task.self.send_packets(self.tasks)
-                if on < p_on:
-                    on += 1
-                    for receiver in self.send_mat[actual_task.self.task_n]:
-                        actual_task.self.fill_buffer(receiver)
-                    actual_task.self.send_packets(self.tasks)
-                    i = self.next_task(i)
-                elif off < p_off:
-                    off += 1
-                    i = self.next_task(i)
-                else:
-                    on, off = 0, 0
-                    p_on, p_off = self.pareto_periods()
-                    i = self.next_task(i)
-                print()
+                self.run_independent_task(actual_task, periods)
+                i = self.next_task(i)
+        actual_time += 1
 
     def run_dependent_task(self, task):
-        if task.self.is_empty(task.self.inBuffer):
-            if task.self.is_empty(task.self.outBuffer):
+        if task.is_empty(task.inBuffer):
+            if task.is_empty(task.outBuffer):
                 return
             else:
                 task.self.send_packets(self.tasks)
-                return
         else:
-            rule = self.find_rules(task.self.inBuffer, self.filter_rules(task.self.task_n))
+            rule = self.find_rules(task.inBuffer, self.filter_rules(task.task_n))
             while len(rule) > 0:
-                for package in task.self.inBuffer:
+                for package in task.inBuffer:
                     if package[0] in rule[1]:
-                        task.self.inBuffer.remove(package)
+                        task.inBuffer.remove(package)
                 for receiver in rule[2]:
-                    task.self.fill_buffer(receiver)
-                rule = self.find_rules(task.self.inBuffer, self.filter_rules(task.self.task_n))
-            task.self.send_packets(self.tasks)
-            return
+                    task.fill_buffer(receiver)
+                rule = self.find_rules(task.inBuffer, self.filter_rules(task.task_n))
+            task.send_packets(self.tasks)
 
-    #def run_independent_task(self):
+    def run_independent_task(self, task, periods):
+        self.verify_periods(task)
+        if periods[0] < self.control_periods[task.task_n][0]:
+            periods[0] += 1
+            for receiver in self.send_mat[task.task_n]:
+                task.fill_buffer(receiver)
+            task.send_packets(self.tasks)
+        elif periods[1] < self.control_periods[task.task_n][1]:
+            periods[1] += 1
+        else:
+            periods[0] = 0
+            periods[1] = 0
+            self.change_periods(task)
+
+    def verify_periods(self, task):
+        if self.control_periods[task.task_n] == [None, None]:
+            self.control_periods[task.task_n][0] = next(task.pareto_periods[0])
+            self.control_periods[task.task_n][1] = next(task.pareto_periods[1])
+
+    def change_periods(self, task):
+        try:
+            self.control_periods[task.task_n][0] = next(task.pareto_periods[0])
+            self.control_periods[task.task_n][1] = next(task.pareto_periods[1])
+        except StopIteration:
+            task.start_periods()
+            self.change_periods(task)
 
     def next_task(self, index):
         if index < len(self.tasks)-1:
