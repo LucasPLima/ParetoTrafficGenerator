@@ -25,10 +25,10 @@ def main():
 
     inf = tsk_analyze.graph_select(tgff_n, inf, graph)
     tasks, dep = tsk_analyze.inf_extract(inf, tasks, dep, t, d)
-    print(tasks , dep)
     mat_dep_send, mat_dep_receive = tsk_analyze.matrix_create(len(tasks)), tsk_analyze.matrix_create(len(tasks))
     mat_dep_send = tsk_analyze.dest_list(tasks, dep, mat_dep_send)
     mat_dep_receive = tsk_analyze.recv_list(tasks, dep, mat_dep_receive)
+    print(mat_dep_receive)
     ind_tasks = tsk_analyze.extract_ind(tasks, mat_dep_send, ind_tasks)
     print(ind_tasks)
 

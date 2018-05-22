@@ -23,20 +23,26 @@ class Task(object):
         return True
 
     def fill_buffer(self, destination_task):
-        package = list([None, None])
-        package[0].append(destination_task)
-        package[1].append(self.random_char(8))
+        package = list([])
+        package.append(destination_task)
+        package.append(self.random_char(8))
         self.outBuffer.append(package)
 
     def send_packets(self, tasks):
         #TODO
         traces = []
+        trace = []
         while not self.is_empty(self.outBuffer):
             s = self.outBuffer.pop()
+            trace.append(s[0])
             for i in tasks:
-                if i.self.task_n == s[0]:
+                if i.task_n == s[0]:
+                    trace.append(self.task_n)
                     s[0] = self.task_n
-                    i.self.inBuffer.append(s)
+                    i.inBuffer.append(s)
+                    traces.append(trace)
+                    trace = []
+        return traces
 
     def pareto_on_periods(self, pareto):
         for i in range(len(pareto[0])):
