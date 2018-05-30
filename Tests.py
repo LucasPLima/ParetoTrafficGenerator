@@ -1,43 +1,24 @@
-def yieldtest():
-    for i in range(4):
-        yield i
+from application_simulator import Task, Simulator
+from random import randint
+
 
 def main():
-    print(next(yieldtest()))
-    print(next(yieldtest()))
+    tasks = []
 
-    '''
-    print(sum(a))
-    c = sum(a)
-    d = []
     for i in range(4):
-        e = round(sum(a)/5)
-        d.append(e)
-        c = c-e
+        if i == 0:
+            tasks.append(Task.Task(i, True, 0))
+            continue
+        tasks.append(Task.Task(i, False, randint(1, 2)))
 
-    d.append(c)
+    for i in tasks:
+        i.to_string()
 
-    print(d)
-    '''
-    # j = len(a)
-    # b = 4
-    # a = round(j/b)
-    # ctr.append(a)
-    # for i in range(2, b):
-    #     ctr.append(a*i)
-    # print(ctr)
-    #
-    # # if j % b == b-2 or j % b == b-1:
-    # #     for i in range(len(ctr)):
-    # #         ctr[i] = ctr[i] - (b-(j % b))
-    #
-    # print(ctr)
-    #
-    # for i in range(ctr[0]):
-    #     print('a={}\tb={}\tc={}\td={}'.format(i, (i + ctr[0]), (i+ctr[1]), (i+ctr[2])))
-    #
-    # print(j-1)
-    # print(j % b)
+    rec_mat = [[], ['t1_0'], ['t1_0'], ['t1_1', 't1_2'], ['t1_3']]
+    sen_mat = [['t1_1', 't1_2'], ['t1_3'], ['t1_3'], ['t1_4'], []]
+
+    test_sim = Simulator.Simulator(tasks=tasks, receive_mat=rec_mat, send_mat=sen_mat)
+    test_sim.run_simulation()
 
 
 if __name__ == '__main__':

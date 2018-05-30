@@ -39,4 +39,4 @@ def paretoCalculate():
 
 
 if __name__ == '__main__':
-    paretoCalculate()
+    print(list(paretoCalculate()))

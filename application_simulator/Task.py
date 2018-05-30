@@ -5,10 +5,11 @@ from application_gen import paretoGen
 
 class Task(object):
 
-    def __init__(self, task_n, independent=False, latency=0):
+    def __init__(self, task_n, independent=False, p_time=0):
         self.task_n = task_n
         self.independent = independent
-        self.latency = latency
+        self.p_time = p_time
+        self.processed_packets = []
         self.inBuffer = []
         self.outBuffer = []
 
@@ -22,27 +23,39 @@ class Task(object):
             return False
         return True
 
+    #TODO
     def fill_buffer(self, destination_task):
         package = list([])
+        package.append(self.task_n)
         package.append(destination_task)
         package.append(self.random_char(8))
         self.outBuffer.append(package)
 
+    #TODO
     def send_packets(self, tasks):
-        #TODO
         traces = []
         trace = []
         while not self.is_empty(self.outBuffer):
             s = self.outBuffer.pop()
-            trace.append(s[0])
+            trace.append(s[1])
             for i in tasks:
-                if i.task_n == s[0]:
-                    trace.append(self.task_n)
-                    s[0] = self.task_n
+                if i.task_n == s[1]:
+                    trace.append(s[0])
+                    s.append(i.p_time)
                     i.inBuffer.append(s)
                     traces.append(trace)
                     trace = []
         return traces
+
+    def process_packets(self):
+        for packet in self.inBuffer:
+            if packet[3] > 0:
+                packet[3] -= 1
+                if packet[3] == 0:
+                    self.processed_packets.append(packet)
+        for packet in self.processed_packets:
+            if packet in self.inBuffer:
+                self.inBuffer.remove(packet)
 
     def pareto_on_periods(self, pareto):
         for i in range(len(pareto[0])):
@@ -59,11 +72,5 @@ class Task(object):
     def random_char(self, y):
         return ''.join(choice(ascii_letters) for x in range(y))
 
-    def get_task_n(self):
-        return self.task_n
-
-    def get_in_buffer(self):
-        return self.inBuffer
-
-    def get_out_buffer(self):
-        return self.outBuffer
+    def to_string(self):
+        print('Task {}:\n\tIndependent? {}\n\tProcess time = {}'.format(self.task_n, self.independent, self.p_time))

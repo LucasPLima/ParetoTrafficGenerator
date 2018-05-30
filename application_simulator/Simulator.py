@@ -20,21 +20,21 @@ class Simulator(object):
 
     def run_simulation(self):
         actual_time = 1
-        i = 0
-        periods = [0, 0]
         self.init_rules(len(self.tasks), self.receive_mat, self.send_mat)
         self.traces_file = open('application_simulator/traces.txt', 'w')
 
-        while actual_time <= self.time:
-            actual_task = self.tasks[i]
+        while actual_time < self.time:
 
-            if not actual_task.independent:
-                self.run_dependent_task(actual_task, actual_time)
-                i = self.next_task(i)
-            else:
-                self.run_independent_task(actual_task, periods, actual_time)
-                i = self.next_task(i)
+            for actual_task in self.tasks:
+                if not actual_task.independent:
+                    if self.is_deadline_task(actual_task):
+                        self.run_deadline_task(actual_task)
+                    else:
+                        self.run_dependent_task(actual_task, actual_time)
+                else:
+                    self.run_independent_task(actual_task, actual_time)
             actual_time += 1
+
         self.traces_file.close()
         print('Simulation finished.')
 
@@ -54,44 +54,51 @@ class Simulator(object):
                     out_tasks.remove(t)
 
     def run_dependent_task(self, task, actual_time):
-        if task.is_empty(task.inBuffer):
+        task.process_packets()
+        if task.is_empty(task.processed_packets):
             if task.is_empty(task.outBuffer):
                 return
             else:
-                traces = task.self.send_packets(self.tasks)
+                traces = task.send_packets(self.tasks)
                 self.register_trace(traces, actual_time)
         else:
-            rule = self.find_rules(task.inBuffer, self.filter_rules(task.task_n))
+            rule = self.find_rules(task.processed_packets, self.filter_rules(task.task_n))
             while len(rule) > 0:
-                #TODO
                 in_packages = []
-                for package in task.inBuffer:
+                for package in task.processed_packets:
                     if package[0] in rule[1]:
                         in_packages.append(package)
 
                 for package in in_packages:
-                    task.inBuffer.remove(package)
+                    task.processed_packets.remove(package)
 
                 for receiver in rule[2]:
                     task.fill_buffer(receiver)
-                rule = self.find_rules(task.inBuffer, self.filter_rules(task.task_n))
+                rule = self.find_rules(task.processed_packets, self.filter_rules(task.task_n))
             traces = task.send_packets(self.tasks)
             self.register_trace(traces, actual_time)
 
-    def run_independent_task(self, task, periods, actual_time):
+    def run_independent_task(self, task, actual_time):
         self.verify_periods(task)
-        if periods[0] < self.control_periods[task.task_n][0]:
-            periods[0] += 1
+        if self.control_periods[task.task_n][0] > 0:
+            self.control_periods[task.task_n][0] -= 1
             for receiver in self.send_mat[task.task_n]:
                 task.fill_buffer(receiver)
             traces = task.send_packets(self.tasks)
             self.register_trace(traces, actual_time)
-        elif periods[1] < self.control_periods[task.task_n][1]:
-            periods[1] += 1
-        else:
-            periods[0] = 0
-            periods[1] = 0
-            self.change_periods(task)
+        elif self.control_periods[task.task_n][1] > 0:
+            self.control_periods[task.task_n][1] -= 1
+            if self.control_periods[task.task_n][1] == 0:
+                self.change_periods(task)
+
+    def is_deadline_task(self, task):
+        if not len(self.send_mat[task.task_n]) > 0:
+            return True
+        return False
+
+    def run_deadline_task(self, task):
+        while not task.is_empty(task.inBuffer):
+            task.inBuffer.pop()
 
     def register_trace(self, traces, actual_time):
         for trace in traces:
@@ -111,11 +118,6 @@ class Simulator(object):
         except StopIteration:
             task.start_periods()
             self.change_periods(task)
-
-    def next_task(self, index):
-        if index < len(self.tasks)-1:
-            return index+1
-        return 0
 
     def find_rules(self, in_buffer, rules):
         sources = []
