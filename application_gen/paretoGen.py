@@ -1,12 +1,12 @@
 import random
 
 
-def paretoCalculate():
+def paretoCalculate(simulation_time):
     packetSendTime = random.uniform(0.01, 0.05)
     eton = 0.1
     etoff = 0.05
-    h = random.uniform(0.5,1)
-    simulationTime = 1000
+    h = 0.99
+    simulationTime = simulation_time
     time = 0
 
     valoresON = []
@@ -39,4 +39,4 @@ def paretoCalculate():
 
 
 if __name__ == '__main__':
-    print(list(paretoCalculate()))
+    print(list(paretoCalculate(10000)))

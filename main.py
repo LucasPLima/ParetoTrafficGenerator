@@ -8,7 +8,7 @@ from tgff_op import tsk_analyze
 
 def main():
     graph = (int(input('Select the graph number:')))
-    tgff = open("tgff_files/creds1.tgff", "r")
+    tgff = open("tgff_files/simple.tgff", "r")
     tgff_n = tgff.readlines()
     local = os.path.dirname('app{}/'.format(graph))
     send_matrix = open('outputMatrixes/SendMatrixGraph{}'.format(graph), 'w')
@@ -37,7 +37,7 @@ def main():
     tsk_analyze.output_matrix(mat_dep_send, tasks, send_matrix)
     tsk_analyze.output_matrix(mat_dep_receive, tasks, receive_matrix)
 
-    app_manager.create_versions(ind_index, mat_dep_send,mat_dep_receive, local, graph)
+    #app_manager.create_versions(ind_index, mat_dep_send,mat_dep_receive, local, graph)
 
     print('Aplicação gerada.')
 

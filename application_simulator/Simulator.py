@@ -5,22 +5,24 @@ from itertools import combinations
 
 class Simulator(object):
 
-    def __init__(self, tasks, time=100, receive_mat=None, send_mat=None):
+    def __init__(self, tasks, time=100000, receive_mat=None, send_mat=None):
         self.tasks = tasks
         self.time = time
         self.receive_mat = list(map(tsk_analyze.indexes_of, receive_mat))
         self.send_mat = list(map(tsk_analyze.indexes_of, send_mat))
         self.depTable = []
-        self.control_periods = [0] * len(self.tasks)
+        self.control_periods = [[0, 0]] * len(self.tasks)
         self.traces_file = None
 
         for task in self.tasks:
             if task.independent:
-                self.control_periods[task.task_n] = [None, None]
+                self.control_periods[task.task_n] = [[None, None] for i in range(len(self.send_mat[task.task_n]))]
+                task.generate_paretos(len(self.send_mat[task.task_n]), self.time)
+
+        self.init_rules(len(self.tasks), self.receive_mat, self.send_mat)
 
     def run_simulation(self):
         actual_time = 1
-        self.init_rules(len(self.tasks), self.receive_mat, self.send_mat)
         self.traces_file = open('application_simulator/traces.txt', 'w')
 
         while actual_time < self.time:
@@ -79,17 +81,19 @@ class Simulator(object):
             self.register_trace(traces, actual_time)
 
     def run_independent_task(self, task, actual_time):
-        self.verify_periods(task)
-        if self.control_periods[task.task_n][0] > 0:
-            self.control_periods[task.task_n][0] -= 1
-            for receiver in self.send_mat[task.task_n]:
-                task.fill_buffer(receiver)
-            traces = task.send_packets(self.tasks)
-            self.register_trace(traces, actual_time)
-        elif self.control_periods[task.task_n][1] > 0:
-            self.control_periods[task.task_n][1] -= 1
-            if self.control_periods[task.task_n][1] == 0:
-                self.change_periods(task)
+        self.verify_periods(self.control_periods[task.task_n], task)
+        #TODO
+        # Adicionar um gerador de pareto pra cada destino
+        for i in range(len(self.send_mat[task.task_n])):
+            if self.control_periods[task.task_n][i][0] > 0:
+                self.control_periods[task.task_n][i][0] -= 1
+                task.fill_buffer(self.send_mat[task.task_n][i])
+                traces = task.send_packets(self.tasks)
+                self.register_trace(traces, actual_time)
+            elif self.control_periods[task.task_n][i][1] > 0:
+                self.control_periods[task.task_n][i][1] -= 1
+                if self.control_periods[task.task_n][i][1] == 0:
+                    self.change_periods(i, task)
 
     def is_deadline_task(self, task):
         if not len(self.send_mat[task.task_n]) > 0:
@@ -106,18 +110,20 @@ class Simulator(object):
             trace.reverse()
             self.traces_file.write('{timestamp}\t{tx}\t{rx}\n'.format(timestamp=trace[0], tx=trace[1], rx=trace[2]))
 
-    def verify_periods(self, task):
-        if self.control_periods[task.task_n] == [None, None]:
-            self.control_periods[task.task_n][0] = next(task.pareto_periods[0])
-            self.control_periods[task.task_n][1] = next(task.pareto_periods[1])
+    def verify_periods(self, periods, task):
+        for i in range(len(periods)):
+            if periods[i] == [None, None]:
+                periods[i][0] = next(task.pareto_periods[i][0])
+                periods[i][1] = next(task.pareto_periods[i][1])
 
-    def change_periods(self, task):
+    #TODO
+    def change_periods(self, period, task):
         try:
-            self.control_periods[task.task_n][0] = next(task.pareto_periods[0])
-            self.control_periods[task.task_n][1] = next(task.pareto_periods[1])
+            self.control_periods[task.task_n][period][0] = next(task.pareto_periods[period][0])
+            self.control_periods[task.task_n][period][1] = next(task.pareto_periods[period][1])
         except StopIteration:
-            task.start_periods()
-            self.change_periods(task)
+            task.start_periods(task.paretos[period], task.pareto_periods[period])
+            self.change_periods(period, task)
 
     def find_rules(self, in_buffer, rules):
         sources = []

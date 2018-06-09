@@ -14,9 +14,8 @@ class Task(object):
         self.outBuffer = []
 
         if self.independent:
-            self.pareto = list(paretoGen.paretoCalculate())
-            self.pareto_periods = [None, None]
-            self.start_periods()
+            self.paretos = []
+            self.pareto_periods = []
 
     def is_empty(self, buffer):
         if len(buffer) != 0:
@@ -24,6 +23,13 @@ class Task(object):
         return True
 
     #TODO
+    def generate_paretos(self, receivers, simulation_time):
+        for i in range(receivers):
+            self.paretos.append(list(paretoGen.paretoCalculate(simulation_time)))
+            self.pareto_periods.append([None, None])
+        for i in range(len(self.paretos)):
+            self.start_periods(self.paretos[i], self.pareto_periods[i])
+
     def fill_buffer(self, destination_task):
         package = list([])
         package.append(self.task_n)
@@ -31,7 +37,6 @@ class Task(object):
         package.append(self.random_char(8))
         self.outBuffer.append(package)
 
-    #TODO
     def send_packets(self, tasks):
         traces = []
         trace = []
@@ -59,15 +64,15 @@ class Task(object):
 
     def pareto_on_periods(self, pareto):
         for i in range(len(pareto[0])):
-            yield self.pareto[0][i]
+            yield pareto[0][i]
 
     def pareto_off_periods(self, pareto):
         for i in range(len(pareto[1])):
-            yield self.pareto[1][i]
+            yield pareto[1][i]
 
-    def start_periods(self):
-        self.pareto_periods[0] = self.pareto_on_periods(self.pareto)
-        self.pareto_periods[1] = self.pareto_off_periods(self.pareto)
+    def start_periods(self, pareto, pareto_periods):
+        pareto_periods[0] = self.pareto_on_periods(pareto)
+        pareto_periods[1] = self.pareto_off_periods(pareto)
 
     def random_char(self, y):
         return ''.join(choice(ascii_letters) for x in range(y))
