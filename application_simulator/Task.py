@@ -12,10 +12,8 @@ class Task(object):
         self.processed_packets = []
         self.inBuffer = []
         self.outBuffer = []
-
-        if self.independent:
-            self.paretos = []
-            self.pareto_periods = []
+        self.paretos = []
+        self.pareto_periods = []
 
     def is_empty(self, buffer):
         if len(buffer) != 0:
@@ -24,6 +22,8 @@ class Task(object):
 
     #TODO
     def generate_paretos(self, receivers, simulation_time):
+        self.paretos = []
+        self.pareto_periods = []
         for i in range(receivers):
             self.paretos.append(list(paretoGen.paretoCalculate(simulation_time)))
             self.pareto_periods.append([None, None])

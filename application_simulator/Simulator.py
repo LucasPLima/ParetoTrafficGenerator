@@ -1,32 +1,31 @@
 from application_gen import node_create as utils
 from tgff_op import tsk_analyze
 from itertools import combinations
+from application_simulator import Utils
 
 
 class Simulator(object):
 
-    def __init__(self, tasks, time=100000, receive_mat=None, send_mat=None):
+    def __init__(self, tasks, time=1000, receive_mat=None, send_mat=None):
         self.tasks = tasks
         self.time = time
         self.receive_mat = list(map(tsk_analyze.indexes_of, receive_mat))
         self.send_mat = list(map(tsk_analyze.indexes_of, send_mat))
         self.depTable = []
         self.control_periods = [[0, 0]] * len(self.tasks)
+        self.traces = []
         self.traces_file = None
-
-        for task in self.tasks:
-            if task.independent:
-                self.control_periods[task.task_n] = [[None, None] for i in range(len(self.send_mat[task.task_n]))]
-                task.generate_paretos(len(self.send_mat[task.task_n]), self.time)
 
         self.init_rules(len(self.tasks), self.receive_mat, self.send_mat)
 
-    def run_simulation(self):
+    def run_simulation(self, local, n):
+        write_ctrl = 0
         actual_time = 1
-        self.traces_file = open('application_simulator/traces.txt', 'w')
+        self.traces_file = open('{}/traces_{}_{}.txt'.format(local, self.time, n), 'w')
+        self.restart_periods()
 
         while actual_time < self.time:
-
+            progress = (actual_time/self.time) * 100
             for actual_task in self.tasks:
                 if not actual_task.independent:
                     if self.is_deadline_task(actual_task):
@@ -36,8 +35,15 @@ class Simulator(object):
                 else:
                     self.run_independent_task(actual_task, actual_time)
             actual_time += 1
+            write_ctrl += 1
+            if write_ctrl == 100 or actual_time == self.time:
+                self.wrt_traces()
+                self.traces = []
+                write_ctrl = 0
+            print('Progress:{}%'.format(round(progress)))
 
         self.traces_file.close()
+        self.control_periods = [[0, 0]] * len(self.tasks)
         print('Simulation finished.')
 
     def init_rules(self, n_tasks, rcv_m, snd_m):
@@ -108,6 +114,11 @@ class Simulator(object):
         for trace in traces:
             trace.append(actual_time)
             trace.reverse()
+            self.traces.append(trace)
+            #self.traces_file.write('{timestamp}\t{tx}\t{rx}\n'.format(timestamp=trace[0], tx=trace[1], rx=trace[2]))
+
+    def wrt_traces(self):
+        for trace in self.traces:
             self.traces_file.write('{timestamp}\t{tx}\t{rx}\n'.format(timestamp=trace[0], tx=trace[1], rx=trace[2]))
 
     def verify_periods(self, periods, task):
@@ -116,7 +127,12 @@ class Simulator(object):
                 periods[i][0] = next(task.pareto_periods[i][0])
                 periods[i][1] = next(task.pareto_periods[i][1])
 
-    #TODO
+    def restart_periods(self):
+        for task in self.tasks:
+            if task.independent:
+                self.control_periods[task.task_n] = [[None, None] for i in range(len(self.send_mat[task.task_n]))]
+                task.generate_paretos(len(self.send_mat[task.task_n]), self.time)
+
     def change_periods(self, period, task):
         try:
             self.control_periods[task.task_n][period][0] = next(task.pareto_periods[period][0])

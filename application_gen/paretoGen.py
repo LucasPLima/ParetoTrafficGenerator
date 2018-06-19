@@ -2,10 +2,10 @@ import random
 
 
 def paretoCalculate(simulation_time):
-    packetSendTime = random.uniform(0.01, 0.05)
-    eton = 0.1
+    packetSendTime = random.uniform(0.01, 0.08)
+    eton = 0.2
     etoff = 0.05
-    h = 0.99
+    h = random.uniform(0.90, 0.99)
     simulationTime = simulation_time
     time = 0
 
