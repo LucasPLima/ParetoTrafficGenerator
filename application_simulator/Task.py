@@ -9,7 +9,7 @@ class Task(object):
         self.task_n = task_n
         self.independent = independent
         self.p_time = p_time
-        self.processed_packets = []
+        self.packets_to_process = []
         self.inBuffer = []
         self.outBuffer = []
         self.paretos = []
@@ -20,7 +20,6 @@ class Task(object):
             return False
         return True
 
-    #TODO
     def generate_paretos(self, receivers, simulation_time):
         self.paretos = []
         self.pareto_periods = []
@@ -29,14 +28,14 @@ class Task(object):
             self.pareto_periods.append([None, None])
         for i in range(len(self.paretos)):
             self.start_periods(self.paretos[i], self.pareto_periods[i])
-
+    #TODO
     def fill_buffer(self, destination_task):
         package = list([])
         package.append(self.task_n)
         package.append(destination_task)
-        package.append(self.random_char(8))
+        package.append(self.random_char(9))
         self.outBuffer.append(package)
-
+    #TODO
     def send_packets(self, tasks):
         traces = []
         trace = []
@@ -46,21 +45,22 @@ class Task(object):
             for i in tasks:
                 if i.task_n == s[1]:
                     trace.append(s[0])
-                    s.append(i.p_time)
                     i.inBuffer.append(s)
                     traces.append(trace)
                     trace = []
         return traces
-
+    #TODO
     def process_packets(self):
-        for packet in self.inBuffer:
-            if packet[3] > 0:
-                packet[3] -= 1
-                if packet[3] == 0:
-                    self.processed_packets.append(packet)
-        for packet in self.processed_packets:
-            if packet in self.inBuffer:
-                self.inBuffer.remove(packet)
+        processed_packets=[]
+        for refference in self.packets_to_process:
+            if refference[1] > 0:
+                refference[1] -= 1
+                if refference[1] == 0:
+                    processed_packets.append(refference)
+        for refference in processed_packets:
+            if refference in self.packets_to_process:
+                self.packets_to_process.remove(refference)
+                self.fill_buffer(refference[0])
 
     def pareto_on_periods(self, pareto):
         for i in range(len(pareto[0])):

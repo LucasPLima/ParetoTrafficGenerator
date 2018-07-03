@@ -3,11 +3,12 @@ import os
 from application_gen import node_create, app_manager
 from tgff_op import tsk_analyze
 from application_simulator import simulator_mngr as smm
+import time
 
 
 def main():
-    graph = 2
-    tgff = open("tgff_files/simple.tgff", "r")
+    graph = 1
+    tgff = open("tgff_files/simple_9_2_g1.tgff", "r")
     tgff_n = tgff.readlines()
     send_matrix = open('outputMatrixes/SendMatrixGraph{}'.format(graph), 'w')
     receive_matrix = open('outputMatrixes/ReceiveMatrixGraph{}'.format(graph), 'w')
@@ -33,14 +34,15 @@ def main():
     tsk_analyze.output_matrix(mat_dep_send, tasks, send_matrix)
     tsk_analyze.output_matrix(mat_dep_receive, tasks, receive_matrix)
 
+    start_time = time.time()
     smm.init_simulation(len(tasks), ind_index, mat_dep_receive, mat_dep_send)
     #app_manager.create_versions(ind_index, mat_dep_send,mat_dep_receive, local, graph)
 
     print('Aplicação gerada.')
-
     tgff.close()
     send_matrix.close()
     receive_matrix.close()
+    print('Time of processing:{} seconds'.format(round(time.time() - start_time)))
 
 
 if __name__ == '__main__':

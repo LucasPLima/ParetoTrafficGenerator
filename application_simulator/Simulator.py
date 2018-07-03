@@ -23,6 +23,7 @@ class Simulator(object):
         actual_time = 1
         self.traces_file = open('{}/traces_{}_{}.txt'.format(local, self.time, n), 'w')
         self.restart_periods()
+        self.empty_buffers()
 
         while actual_time < self.time:
             progress = (actual_time/self.time) * 100
@@ -36,7 +37,7 @@ class Simulator(object):
                     self.run_independent_task(actual_task, actual_time)
             actual_time += 1
             write_ctrl += 1
-            if write_ctrl == 100 or actual_time == self.time:
+            if write_ctrl == 1000 or actual_time == self.time:
                 self.wrt_traces()
                 self.traces = []
                 write_ctrl = 0
@@ -61,35 +62,38 @@ class Simulator(object):
                 for t in t_out:
                     out_tasks.remove(t)
 
+    #TODO
     def run_dependent_task(self, task, actual_time):
         task.process_packets()
-        if task.is_empty(task.processed_packets):
+        if task.is_empty(task.inBuffer):
             if task.is_empty(task.outBuffer):
                 return
             else:
                 traces = task.send_packets(self.tasks)
                 self.register_trace(traces, actual_time)
         else:
-            rule = self.find_rules(task.processed_packets, self.filter_rules(task.task_n))
+            rule = self.find_rules(task.inBuffer, self.filter_rules(task.task_n))
             while len(rule) > 0:
                 in_packages = []
-                for package in task.processed_packets:
+                for package in task.inBuffer:
                     if package[0] in rule[1]:
                         in_packages.append(package)
 
                 for package in in_packages:
-                    task.processed_packets.remove(package)
+                    task.inBuffer.remove(package)
 
                 for receiver in rule[2]:
-                    task.fill_buffer(receiver)
-                rule = self.find_rules(task.processed_packets, self.filter_rules(task.task_n))
-            traces = task.send_packets(self.tasks)
-            self.register_trace(traces, actual_time)
+                    packet_refference = [receiver, task.p_time]
+                    task.packets_to_process.append(packet_refference)
+
+                rule = self.find_rules(task.inBuffer, self.filter_rules(task.task_n))
+
+            if not task.is_empty(task.outBuffer):
+                traces = task.send_packets(self.tasks)
+                self.register_trace(traces, actual_time)
 
     def run_independent_task(self, task, actual_time):
         self.verify_periods(self.control_periods[task.task_n], task)
-        #TODO
-        # Adicionar um gerador de pareto pra cada destino
         for i in range(len(self.send_mat[task.task_n])):
             if self.control_periods[task.task_n][i][0] > 0:
                 self.control_periods[task.task_n][i][0] -= 1
@@ -147,15 +151,15 @@ class Simulator(object):
         for package in in_buffer:
             sources.append(package[0])
 
-        sources_cmb = self.create_combinations(sources)
-
-        for subset in sources_cmb:
-            for rule in rules:
-                subset = tuple(sorted(subset))
-                aux = tuple(sorted(rule[1]))
-                if subset == aux:
-                    return rule
-        return []
+        for rule in rules:
+            in_tasks = []
+            aux = tuple(sorted(rule[1]))
+            for source in sources:
+                if source in aux and source not in in_tasks:
+                    in_tasks.append(source)
+                    if tuple(sorted(in_tasks)) == aux:
+                        return rule
+            return []
 
     def filter_rules(self, task_n):
         rules = []
@@ -163,6 +167,12 @@ class Simulator(object):
             if task_n == dependencie[0]:
                 rules.append(dependencie)
         return rules
+
+    def empty_buffers(self):
+        for task in self.tasks:
+            task.inBuffer = []
+            task.outBuffer = []
+            task.packets_to_process = []
 
     def create_combinations(self, elements):
         comb = []
